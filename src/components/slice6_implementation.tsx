@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UploadCloud, CheckCircle2, Loader2, Info } from 'lucide-react';
-import * as THREE from 'three';
+import { UploadCloud, CheckCircle2, Loader2, Package } from 'lucide-react';
 
 // ----------------------------------------------------------------------
 // 1. DYNAMIC IMPORT DO VISUALIZADOR R3F (SSR: FALSE)
