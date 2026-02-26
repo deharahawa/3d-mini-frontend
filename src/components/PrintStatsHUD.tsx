@@ -2,7 +2,35 @@ import React from "react";
 import { CheckCircle2, Download, Box } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function PrintStatsHUD() {
+interface PrintStatsHUDProps {
+  modelUrl?: string;
+}
+
+export default function PrintStatsHUD({ modelUrl }: PrintStatsHUDProps) {
+  const handleDownload = async (type: "glb" | "3mf") => {
+    if (!modelUrl) return;
+
+    if (type === "3mf") {
+      alert("⚠️ Arquivo 3MF de fatiamento ainda não disponível. Baixando a malha 3D original (.glb) como fallback.");
+    }
+
+    try {
+      const response = await fetch(modelUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "miniatura.glb";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Erro ao baixar o modelo:", error);
+      alert("Ocorreu um erro ao tentar baixar o modelo.");
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -38,12 +66,20 @@ export default function PrintStatsHUD() {
       </div>
 
       <div className="mt-8 flex flex-col space-y-4 relative z-10">
-        <button className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg py-4 px-6 rounded-2xl transition-all shadow-lg shadow-purple-900/40 hover:scale-[1.02] active:scale-95">
+        <button 
+          onClick={() => handleDownload("3mf")}
+          disabled={!modelUrl}
+          className="w-full flex items-center justify-center gap-3 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-lg py-4 px-6 rounded-2xl transition-all shadow-lg shadow-purple-900/40 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <Download className="w-5 h-5" />
           Baixar 3MF & G-Code
         </button>
         
-        <button className="w-full flex items-center justify-center gap-2 text-zinc-500 hover:text-zinc-300 font-medium py-2 transition-colors text-sm">
+        <button 
+          onClick={() => handleDownload("glb")}
+          disabled={!modelUrl}
+          className="w-full flex items-center justify-center gap-2 text-zinc-500 hover:text-zinc-300 font-medium py-2 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <Box className="w-4 h-4" />
           Apenas baixar a malha (.glb)
         </button>

@@ -85,7 +85,7 @@ export default function CreateMiniaturePage() {
             )}
 
             {jobState === "SUCCESS" && (
-              <PrintStatsHUD key="stats-hud" />
+              <PrintStatsHUD key="stats-hud" modelUrl={finalModelUrl} />
             )}
           </AnimatePresence>
         </div>
