@@ -15,9 +15,9 @@ export async function POST(req: Request) {
 
     // 2. Disparar a chamada para o servidor Python (Modal.com / RunPod)
     // O servidor Python deve responder imediatamente com um 200/202 e continuar o processamento em background.
-    const modalEndpoint = process.env.MODAL_WEBHOOK_URL!; 
+    const modalEndpoint = process.env.MODAL_API_START_JOB!; 
     
-    // Disparamos em background mas capturamos falhas para atualizar o DB
+    // Disparamos em background
     fetch(modalEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
