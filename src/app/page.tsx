@@ -70,6 +70,14 @@ export default function CreateMiniaturePage() {
     }
   };
 
+  const handleRetry = () => {
+    setJobState("IDLE");
+    setFinalModelUrl("/models/mock_funko.glb");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("funko_job_id");
+    }
+  };
+
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-50 flex items-center justify-center p-6 selection:bg-purple-500/30 font-sans">
       <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -86,7 +94,12 @@ export default function CreateMiniaturePage() {
             )}
 
             {jobState === "SUCCESS" && (
-              <PrintStatsHUD key="stats-hud" modelUrl={finalModelUrl} />
+              <PrintStatsHUD 
+                 key="stats-hud" 
+                 modelUrl={finalModelUrl} 
+                 jobId={jobId || undefined}
+                 onRetry={handleRetry} 
+              />
             )}
           </AnimatePresence>
         </div>

@@ -1,12 +1,16 @@
-import React from "react";
-import { CheckCircle2, Download, Box } from "lucide-react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { CheckCircle2, Download, Box, ThumbsUp, ThumbsDown, RotateCcw } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface PrintStatsHUDProps {
   modelUrl?: string;
+  jobId?: string;
+  onRetry?: () => void;
 }
 
-export default function PrintStatsHUD({ modelUrl }: PrintStatsHUDProps) {
+export default function PrintStatsHUD({ modelUrl, jobId, onRetry }: PrintStatsHUDProps) {
+  const [feedbackGiven, setFeedbackGiven] = useState<"up" | "down" | null>(null);
+
   const handleDownload = async (type: "glb" | "3mf") => {
     if (!modelUrl) return;
 
@@ -28,6 +32,21 @@ export default function PrintStatsHUD({ modelUrl }: PrintStatsHUDProps) {
     } catch (error) {
       console.error("Erro ao baixar o modelo:", error);
       alert("Ocorreu um erro ao tentar baixar o modelo.");
+    }
+  };
+
+  const handleFeedback = async (type: "up" | "down") => {
+    setFeedbackGiven(type);
+    if (!jobId) return;
+
+    try {
+      await fetch(`/api/jobs/${jobId}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ feedback: type })
+      });
+    } catch (error) {
+      console.error("Error sending feedback:", error);
     }
   };
 
@@ -63,6 +82,65 @@ export default function PrintStatsHUD({ modelUrl }: PrintStatsHUDProps) {
           </span>
           <p className="text-3xl font-black text-zinc-100 mt-2">38g</p>
         </div>
+      </div>
+
+      {/* Feedback Section */}
+      <div className="mt-6 pt-6 border-t border-zinc-800/50 relative z-10">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-zinc-400">
+            O resultado ficou legal?
+          </span>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => handleFeedback("up")}
+              className={`p-2 rounded-xl border transition-all ${
+                feedbackGiven === "up" 
+                  ? "bg-green-500/20 border-green-500/50 text-green-400" 
+                  : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-green-400 hover:border-green-500/30 hover:bg-zinc-800/80"
+              }`}
+              title="Ficou ótimo!"
+            >
+              <ThumbsUp className="w-5 h-5" />
+            </button>
+            <button 
+               onClick={() => handleFeedback("down")}
+               className={`p-2 rounded-xl border transition-all ${
+                feedbackGiven === "down" 
+                  ? "bg-red-500/20 border-red-500/50 text-red-400" 
+                  : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:text-red-400 hover:border-red-500/30 hover:bg-zinc-800/80"
+              }`}
+              title="Gerou errado"
+            >
+              <ThumbsDown className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {(feedbackGiven === "down" || feedbackGiven === "up") && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, marginTop: 0 }}
+              animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+              exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              className="overflow-hidden"
+            >
+               {feedbackGiven === "down" && onRetry && (
+                 <button 
+                   onClick={onRetry}
+                   className="w-full flex items-center justify-center gap-2 bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 py-3 rounded-xl transition-colors font-medium text-sm border border-zinc-700 hover:border-zinc-600"
+                 >
+                   <RotateCcw className="w-4 h-4" />
+                   Tentar Gerar Novamente
+                 </button>
+               )}
+               {feedbackGiven === "up" && (
+                 <p className="text-sm text-green-400 text-center bg-green-500/10 py-2 rounded-lg border border-green-500/20">
+                   Obrigado pelo feedback! Que bom que gostou.
+                 </p>
+               )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="mt-8 flex flex-col space-y-4 relative z-10">
