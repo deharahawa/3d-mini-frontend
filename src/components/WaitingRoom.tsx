@@ -13,10 +13,10 @@ interface ProcessingStep {
 }
 
 const INITIAL_STEPS: ProcessingStep[] = [
-  { id: "ai_2d", label: "Analisando Traços (IA Text-to-Image)...", status: "pending" },
-  { id: "ai_3d", label: "Gerando Malha 3D...", status: "pending" },
-  { id: "mesh", label: "Engenharia Mecânica (Cabeça e Corpo)...", status: "pending" },
-  { id: "slicer", label: "Fatiando para Bambu Lab (AMS)...", status: "pending" },
+  { id: "ai_2d", label: "Desenhando os primeiros rascunhos mágicos...", status: "pending" },
+  { id: "ai_3d", label: "Esculpindo o modelo 3D no espaço sideral...", status: "pending" },
+  { id: "mesh", label: "Encaixando as proporções perfeitas da miniatura...", status: "pending" },
+  { id: "slicer", label: "Dando os retoques finais para o mundo real...", status: "pending" },
 ];
 
 const STATUS_ORDER = ["pending", "ai_2d", "ai_3d", "mesh", "slicer", "completed", "error"];
@@ -136,8 +136,8 @@ export default function WaitingRoom({ jobId, onComplete }: WaitingRoomProps) {
             >
               <div className="relative w-7 h-7 mr-4 flex items-center justify-center shrink-0">
                 {step.status === "completed" ? (
-                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-pink-500">
-                    <CheckCircle2 className="w-7 h-7 shadow-pink-500/50 drop-shadow-md" />
+                  <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-green-500">
+                    <CheckCircle2 className="w-7 h-7 shadow-green-500/50 drop-shadow-md" />
                   </motion.div>
                 ) : step.status === "active" ? (
                   <motion.div
@@ -154,7 +154,7 @@ export default function WaitingRoom({ jobId, onComplete }: WaitingRoomProps) {
                 )}
               </div>
               <span className={`text-sm md:text-base font-medium transition-all duration-500 ${
-                step.status === "completed" ? "text-zinc-500" :
+                step.status === "completed" ? "text-green-400" :
                 step.status === "active" ? "text-purple-300 drop-shadow-[0_0_8px_rgba(216,180,254,0.4)]" : 
                 step.status === "error" ? "text-red-400" :
                 "text-zinc-600"

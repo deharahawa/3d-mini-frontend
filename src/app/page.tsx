@@ -8,6 +8,7 @@ import HeroUpload from "@/components/HeroUpload";
 import WaitingRoom from "@/components/WaitingRoom";
 import PrintStatsHUD from "@/components/PrintStatsHUD";
 import ModelViewer from "@/components/ModelViewer";
+import BuildingHologram from "@/components/BuildingHologram";
 import { useFunkoPipeline } from "@/hooks/useFunkoPipeline";
 
 type JobState = "IDLE" | "PROCESSING" | "SUCCESS";
@@ -103,7 +104,8 @@ export default function CreateMiniaturePage() {
 
           {(jobState === "PROCESSING" || jobState === "SUCCESS") && (
             <div className="w-full h-full absolute inset-0 rounded-3xl overflow-hidden bg-zinc-950/50 border border-zinc-800 shadow-2xl relative">
-              {finalModelUrl && <ModelViewer url={jobState === "SUCCESS" ? finalModelUrl : "/models/mock_funko.glb"} />}
+              {jobState === "PROCESSING" && <BuildingHologram />}
+              {jobState === "SUCCESS" && finalModelUrl && <ModelViewer url={finalModelUrl} />}
             </div>
           )}
         </div>
